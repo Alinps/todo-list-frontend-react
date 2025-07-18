@@ -157,6 +157,45 @@ const deleteTask = async (taskId) => {
   }
 };
 
+const importTasks = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    const text = e.target.result;
+    const lines = text.split('\n').filter(line => line.trim());
+
+    let start = 0;
+    if (lines[0].toLowerCase().includes('title')) start = 1;
+
+    for (let i = start; i < lines.length; i++) {
+      const line = lines[i].replace(/"/g, ''); // Remove quotes
+      const [title, due_date, is_completed] = line.split(',').map(x => x.trim());
+
+      if (!title || !due_date) continue;
+
+      try {
+        await api.post('tasks/', {
+          title,
+          due_date,
+          is_completed: is_completed === 'true'
+        });
+      } catch (err) {
+        console.error(`❌ Import error on row ${i + 1}:`, err.response?.data || err.message);
+      }
+    }
+
+    fetchTasks(); // Update task list
+    alert('✅ Tasks imported from CSV!');
+  };
+
+  reader.readAsText(file);
+};
+
+
+
 // const exportTasksAsJSON = () => {
 //   const dataStr = JSON.stringify(tasks, null, 2);  // Pretty print with 2-space indent
 //   const blob = new Blob([dataStr], { type: "application/json" });
@@ -203,6 +242,20 @@ const exportAsPDF = () => {
   doc.save('tasks.pdf');
 };
 
+const exportAsSQL = () => {
+  const tableName = "tasks";
+  const sqlInsertStatements = tasks.map(task => {
+    // Escape single quotes in title to prevent syntax issues
+    const safeTitle = task.title.replace(/'/g, "''");
+    return `INSERT INTO ${tableName} (title, due_date, is_completed) VALUES ('${safeTitle}', '${task.due_date}', ${task.is_completed ? 1 : 0});`;
+  }).join('\n');
+
+  const blob = new Blob([sqlInsertStatements], { type: 'text/sql' });
+  const url = URL.createObjectURL(blob);
+  downloadFile(url, 'tasks.sql');
+};
+
+
 const downloadFile = (url, filename) => {
   const a = document.createElement('a');
   a.href = url;
@@ -210,6 +263,8 @@ const downloadFile = (url, filename) => {
   a.click();
   URL.revokeObjectURL(url);
 };
+
+
 
 
 const editTask = async (id, updatedData) => {
@@ -287,7 +342,7 @@ const editTask = async (id, updatedData) => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-            Export Tasks
+            📄 Export/Import
             </button>
 
             <ul className="dropdown-menu">
@@ -295,8 +350,17 @@ const editTask = async (id, updatedData) => {
               <li><button className="dropdown-item" onClick={exportAsText}>Export as Text (TXT)</button></li>
               <li><button className="dropdown-item" onClick={exportAsCSV}>Export as CSV</button></li>
               <li><button className="dropdown-item" onClick={exportAsPDF}>Export as PDF</button></li>
+              <li><button className="dropdown-item" onClick={exportAsSQL}>Export as SQL</button></li>
+              <li><label className="dropdown-item" htmlFor="import-csv">📥 Import CSV</label></li>
              </ul>
         </div>
+        <input
+          type="file"
+          accept=".csv"
+          id="import-csv"
+          onChange={importTasks}
+          style={{ display: 'none' }}
+        />
 
 
          <div className="d-flex justify-content-between mt-3">
