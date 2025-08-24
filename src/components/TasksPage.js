@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import { AuthContext } from '../context/AuthContext';
-import api from '../api';
+import api, { logEvent } from '../api';
 import { jsPDF } from "jspdf";
+
 
 const TasksPage = () => {
   const { user, logout } = useContext(AuthContext);
