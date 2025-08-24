@@ -3,7 +3,7 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 const AuthForm = () => {
-  const { login, register } = useContext(AuthContext);
+  const {login, register } = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -24,7 +24,8 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="card p-4 shadow">
+    <div className="d-flex justify-content-center">
+    <div className="card p-4 shadow w-50 d-flex justify-content-center">
       <h4>{isLogin ? 'Login' : 'Register'}</h4>
       <form onSubmit={handleSubmit}>
         <input className="form-control mb-2" type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
@@ -34,11 +35,13 @@ const AuthForm = () => {
         <input className="form-control mb-3" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
         {error && <div className="alert alert-danger">{error}</div>}
         <button className="btn btn-primary w-100 mb-2" type="submit">{isLogin ? 'Login' : 'Register'}</button>
-        <button className="btn btn-link" type="button" onClick={() => setIsLogin(!isLogin)}>
+        <button className="btn btn-link text-center" type="button" onClick={() => setIsLogin(!isLogin)}>
           {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
         </button>
       </form>
     </div>
+    </div>
+    
   );
 };
 

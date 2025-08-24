@@ -8,7 +8,10 @@ const EditTaskModal = ({ show, onClose, task, onSave }) => {
   useEffect(() => {
     if (task) {
       setTitle(task.title);
-      setDueDate(task.due_date);
+      setDueDate(task.due_date ? task.due_date.split("T")[0] : "");
+    } else {
+      setTitle('');
+      setDueDate('');
     }
   }, [task]);
 
@@ -17,8 +20,9 @@ const EditTaskModal = ({ show, onClose, task, onSave }) => {
       alert('Both title and date are required!');
       return;
     }
+    if (!task) return;
     onSave(task.id, { title, due_date: dueDate });
-    onClose(); // Close modal after save
+    onClose();
   };
 
   return (
@@ -26,18 +30,29 @@ const EditTaskModal = ({ show, onClose, task, onSave }) => {
       <Modal.Header closeButton>
         <Modal.Title>Edit Task</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
-            <Form.Control type="text" value={title} onChange={e => setTitle(e.target.value)} />
+            <Form.Control 
+              type="text" 
+              value={title} 
+              onChange={e => setTitle(e.target.value)} 
+            />
           </Form.Group>
+
           <Form.Group>
             <Form.Label>Due Date</Form.Label>
-            <Form.Control type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} />
+            <Form.Control 
+              type="date" 
+              value={dueDate} 
+              onChange={e => setDueDate(e.target.value)} 
+            />
           </Form.Group>
         </Form>
       </Modal.Body>
+
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>Cancel</Button>
         <Button variant="primary" onClick={handleSave}>Save</Button>

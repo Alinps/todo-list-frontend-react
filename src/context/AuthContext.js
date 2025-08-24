@@ -7,52 +7,44 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
 
-//   useEffect(() => {
-//     if (token) {
-//       api.defaults.headers.common['Authorization'] = `Token ${token}`;
-//     } else {
-//       delete api.defaults.headers.common['Authorization'];
-//     }
-//   }, [token]);
-
-
-useEffect(() => {
-  const storedToken = localStorage.getItem('token');
-  const storedUser = localStorage.getItem('user');
-  if (storedToken && storedUser) {
-    setToken(storedToken);
-    setUser(JSON.parse(storedUser));
-    api.defaults.headers.common['Authorization'] = `Token ${storedToken}`;
-  }
-}, []);
-
+  // On mount, hydrate axios header if token exists
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+      api.defaults.headers.common['Authorization'] = `Token ${storedToken}`;
+    }
+  }, []);
 
   const login = async (username, password) => {
-  const res = await api.post('login/', { username, password });
-  const token = res.data.token;
-  setToken(token);
-  api.defaults.headers.common['Authorization'] = `Token ${token}`;
-  setUser({ username: res.data.username, id: res.data.user_id });
-  localStorage.setItem('token', token);
-  localStorage.setItem('user', JSON.stringify({ username: res.data.username, id: res.data.user_id }));
-};
-
+    const res = await api.post('login/', { username, password });
+    const t = res.data.token;
+    setToken(t);
+    api.defaults.headers.common['Authorization'] = `Token ${t}`;
+    const userObj = { username: res.data.username, id: res.data.user_id };
+    setUser(userObj);
+    localStorage.setItem('token', t);
+    localStorage.setItem('user', JSON.stringify(userObj));
+  };
 
   const register = async (username, email, password) => {
-  const res = await api.post('register/', { username, email, password });
-  const token = res.data.token;
-  setToken(token);
-  api.defaults.headers.common['Authorization'] = `Token ${token}`;
-  setUser({ username: res.data.username, id: res.data.user_id });
-  localStorage.setItem('token', token);
-  localStorage.setItem('user', JSON.stringify({ username: res.data.username, id: res.data.user_id }));
-};
-
+    const res = await api.post('register/', { username, email, password });
+    const t = res.data.token;
+    setToken(t);
+    api.defaults.headers.common['Authorization'] = `Token ${t}`;
+    const userObj = { username: res.data.username, id: res.data.user_id };
+    setUser(userObj);
+    localStorage.setItem('token', t);
+    localStorage.setItem('user', JSON.stringify(userObj));
+  };
 
   const logout = () => {
     setToken('');
     setUser(null);
     localStorage.clear();
+    delete api.defaults.headers.common['Authorization'];
   };
 
   return (
