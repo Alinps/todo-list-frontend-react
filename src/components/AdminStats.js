@@ -31,67 +31,77 @@ const AdminStats = () => {
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
-        <input
-          type="date"
-          className="border rounded p-2"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-        />
-        <input
-          type="date"
-          className="border rounded p-2"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-        />
-        <select
-          className="border rounded p-2"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        >
-          <option value="">All users</option>
-          {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
-        </select>
-        <button onClick={fetchStats} className="border rounded px-4">
-          Refresh
-        </button>
-      </div>
-
-      {!stats ? (
-        <p>Loading…</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Tasks Created</div>
-            <div className="text-2xl font-bold">{stats.tasks_created}</div>
-          </div>
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Tasks Updated</div>
-            <div className="text-2xl font-bold">{stats.tasks_updated}</div>
-          </div>
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Tasks Deleted</div>
-            <div className="text-2xl font-bold">{stats.tasks_deleted}</div>
-          </div>
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Marked Completed</div>
-            <div className="text-2xl font-bold">{stats.tasks_completed}</div>
-          </div>
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Marked Uncompleted</div>
-            <div className="text-2xl font-bold">{stats.tasks_uncompleted}</div>
-          </div>
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Imports</div>
-            <div className="text-2xl font-bold">{stats.imports}</div>
-          </div>
-          <div className="border rounded p-4">
-            <div className="text-sm text-gray-500">Exports</div>
-            <div className="text-2xl font-bold">{stats.exports}</div>
-          </div>
+    <div className="d-flex justify-content-center align-items-center min-vh-100">
+      <div>
+        <div className="d-flex flex-column flex-sm-row gap-2 mb-4 justify-content-center">
+          <input
+            type="date"
+            className="form-control"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <input
+            type="date"
+            className="form-control"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+          <select
+            className="form-select"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+          >
+            <option value="">All users</option>
+            {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
+          </select>
+          <button onClick={fetchStats} className="btn btn-outline-primary">
+            Refresh
+          </button>
         </div>
-      )}
+
+        {!stats ? (
+          <p className="text-center">Loading…</p>
+        ) : (
+          <table className="table table-bordered table-hover mx-auto">
+            <thead className="table-light">
+              <tr>
+                <th scope="col">Stat</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tasks Created</td>
+                <td className="fw-bold">{stats.tasks_created}</td>
+              </tr>
+              <tr>
+                <td>Tasks Updated</td>
+                <td className="fw-bold">{stats.tasks_updated}</td>
+              </tr>
+              <tr>
+                <td>Tasks Deleted</td>
+                <td className="fw-bold">{stats.tasks_deleted}</td>
+              </tr>
+              <tr>
+                <td>Marked Completed</td>
+                <td className="fw-bold">{stats.tasks_completed}</td>
+              </tr>
+              <tr>
+                <td>Marked Uncompleted</td>
+                <td className="fw-bold">{stats.tasks_uncompleted}</td>
+              </tr>
+              <tr>
+                <td>Imports</td>
+                <td className="fw-bold">{stats.imports}</td>
+              </tr>
+              <tr>
+                <td>Exports</td>
+                <td className="fw-bold">{stats.exports}</td>
+              </tr>
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };

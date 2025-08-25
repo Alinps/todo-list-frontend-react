@@ -19,7 +19,7 @@ const AdminDashboard = () => {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <button onClick={logout} className="text-sm border px-3 py-1 rounded">
+          <button onClick={logout} className="btn btn-secondary">
             Logout
           </button>
         </div>
@@ -28,13 +28,13 @@ const AdminDashboard = () => {
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setTab("users")}
-              className={`px-4 py-2 rounded ${tab === "users" ? "bg-gray-900 text-white" : "border"}`}
+              className={`px-4 py-2 rounded ${tab === "users" ? "btn btn-primary" : "btn btn-secondary"}`}
             >
               User Report
             </button>
             <button
               onClick={() => setTab("stats")}
-              className={`px-4 py-2 rounded ${tab === "stats" ? "bg-gray-900 text-white" : "border"}`}
+              className={`px-4 py-2 rounded ${tab === "stats" ? "btn btn-primary" : "btn btn-secondary"}`}
             >
               Usage Statistics
             </button>

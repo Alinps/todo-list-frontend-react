@@ -34,39 +34,49 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="card w-50 bg-light p-4 shadow ">
+        <div className="card-body">
+           <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
+            <div className="fom-group">
             <label className="block text-sm mb-1">Username</label>
             <input
-              className="w-full border rounded-md p-2"
+              className="form-control"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="admin username"
               required
             />
           </div>
-          <div>
+          </div>
+          <div className="form-group">
             <label className="block text-sm mb-1">Password</label>
             <input
               type="password"
-              className="w-full border rounded-md p-2"
+              className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
+              
             />
           </div>
-          <button className="w-full bg-gray-900 text-white rounded-md py-2 hover:opacity-90">
+          <button className="btn btn-primary mt-3">
             Login
           </button>
         </form>
       </div>
-    </div>
+        </div>
+      </div>
+  
+    
+
+       
+
   );
 };
 

@@ -1,4 +1,4 @@
-import React, {
+import {
   useContext,
   useEffect,
   useState,
@@ -97,37 +97,73 @@ const TaskList = () => {
   );
 
   // Fetch with optional cursor URL
-  const fetchTasks = useCallback(
-    async (url = "tasks/", status = statusFilter, search = searchTerm) => {
-      setLoading(true);
-      setError("");
-      try {
-        const { data } = await api.get(url, {
-          params: url.includes("?")
-            ? {}
-            : { status: status || undefined, search: search || undefined },
-        });
+  // const fetchTasks = useCallback(
+  //   async (url = "tasks/", status = statusFilter, search = searchTerm) => {
+  //     setLoading(true);
+  //     setError("");
+  //     try {
+  //       const { data } = await api.get(url, {
+  //         params: url.includes("?")
+  //           ? {}
+  //           : { status: status || undefined, search: search || undefined },
+  //       });
 
-        if (Array.isArray(data)) {
-          setTasks(data);
-          setNextPage(null);
-          setPrevPage(null);
-        } else {
-          setTasks(data.results);
-          setNextPage(data.next);
-          setPrevPage(data.previous);
-        }
+  //       if (Array.isArray(data)) {
+  //         setTasks(data);
+  //         setNextPage(null);
+  //         setPrevPage(null);
+  //       } else {
+  //         setTasks(data.results);
+  //         setNextPage(data.next);
+  //         setPrevPage(data.previous);
+  //       }
 
-        setStatusFilter(status);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Failed to load tasks.");
-      } finally {
-        setLoading(false);
+  //       setStatusFilter(status);
+  //     } catch (err) {
+  //       console.error("Fetch error:", err);
+  //       setError("Failed to load tasks.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   },
+  //   [searchTerm, statusFilter]
+  // );
+  // Fetch with optional cursor URL (handles both relative + absolute URLs)
+const fetchTasks = useCallback(
+  async (url = "tasks/", status = statusFilter, search = searchTerm) => {
+    setLoading(true);
+    setError("");
+    try {
+      // If DRF gives absolute URL, let axios use it directly
+      const finalUrl = url.startsWith("http") ? url : url;
+
+      const { data } = await api.get(finalUrl, {
+        params: finalUrl.includes("?")
+          ? {}
+          : { status: status || undefined, search: search || undefined },
+      });
+
+      if (Array.isArray(data)) {
+        setTasks(data);
+        setNextPage(null);
+        setPrevPage(null);
+      } else {
+        setTasks(data.results);
+        setNextPage(data.next);
+        setPrevPage(data.previous);
       }
-    },
-    [searchTerm, statusFilter]
-  );
+
+      setStatusFilter(status);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setError("Failed to load tasks.");
+    } finally {
+      setLoading(false);
+    }
+  },
+  [searchTerm, statusFilter]
+);
+
 
   useEffect(() => {
     fetchTasks();
@@ -262,7 +298,7 @@ const TaskList = () => {
       <h2 className="mb-4 text-center">📝 To-Do App</h2>
 
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <span>Welcome, {user.username}!</span>
+        <span>Welcome, {user?.username}!</span>
         <button className="btn btn-outline-danger" onClick={logout}>
           Logout
         </button>
@@ -318,9 +354,13 @@ const TaskList = () => {
                 </li>
               ))}
               <li>
-                <label className="dropdown-item mb-0" htmlFor="import-csv">
+                <button
+                  className="dropdown-item mb-0"
+                  type="button"
+                  onClick={() => document.getElementById("import-csv").click()}
+                >
                   Import CSV…
-                </label>
+                </button>
               </li>
             </ul>
           </div>

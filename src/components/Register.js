@@ -7,6 +7,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail]     = useState("");
   const [password, setPassword] = useState("");
+  const [phone_number, setPhone_number] = useState("");
   const [error, setError]     = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -17,7 +18,9 @@ const Register = () => {
     setSuccess("");
 
     try {
-      const response = await api.post("register/", { username, email, password });
+      const response = await api.post("register/", { username, email, password, phone_number });
+      console.log(phone_number);
+      console.log(response);
 
       if (response.status === 200) {
         setSuccess("Registration successful! Redirecting to login...");
@@ -29,51 +32,68 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div className="card shadow-lg" style={{ width: "28rem" }}>
+        <div className="card-body">
+          <h2 className="card-title text-center mb-4 fw-bold">Register</h2>
+          {error && <div className="alert alert-danger py-2">{error}</div>}
+          {success && <div className="alert alert-success py-2">{success}</div>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full border p-2 rounded-md"
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email (optional)"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border p-2 rounded-md"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border p-2 rounded-md"
-            required
-          />
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="email"
+                placeholder="Email (optional)"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-control"
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="number"
+                placeholder="Phone Number"
+                value={phone_number}
+                onChange={(e) => setPhone_number(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
+            >
+              Register
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-          >
-            Register
-          </button>
-        </form>
-
-        <p className="text-center text-gray-600 mt-4">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-500 hover:underline">
-            Login
-          </Link>
-        </p>
+          <p className="text-center text-muted mt-3 mb-0">
+            Already have an account?{" "}
+            <Link to="/login" className="text-primary text-decoration-underline">
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

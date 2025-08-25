@@ -24,57 +24,59 @@ const AdminUsers = () => {
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
+    <div className="d-flex flex-column align-items-center">
+      <div className="d-flex flex-column flex-sm-row gap-2 mb-4 w-100" style={{maxWidth: 700}}>
         <input
           type="date"
-          className="border rounded p-2"
+          className="form-control"
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
         />
         <input
           type="date"
-          className="border rounded p-2"
+          className="form-control"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
         />
         <input
           type="text"
           placeholder="Search username/email"
-          className="border rounded p-2 flex-1"
+          className="form-control flex-grow-1"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={fetchUsers} className="border rounded px-4">
+        <button onClick={fetchUsers} className="btn btn-outline-primary">
           Filter
         </button>
       </div>
 
-      <div className="overflow-auto">
-        <table className="w-full border">
-          <thead className="bg-gray-50">
+      <div className="table-responsive" style={{maxWidth: 900, width: "100%"}}>
+        <table className="table table-bordered table-hover text-center align-middle">
+          <thead className="table-light">
             <tr>
-              <th className="text-left p-2 border">ID</th>
-              <th className="text-left p-2 border">Username</th>
-              <th className="text-left p-2 border">Email</th>
-              <th className="text-left p-2 border">Joined</th>
-              <th className="text-left p-2 border">Active</th>
-              <th className="text-left p-2 border">Staff</th>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Joined</th>
+              <th>Active</th>
+              <th>Staff</th>
             </tr>
           </thead>
           <tbody>
             {users.map(u => (
               <tr key={u.id}>
-                <td className="p-2 border">{u.id}</td>
-                <td className="p-2 border">{u.username}</td>
-                <td className="p-2 border">{u.email || "-"}</td>
-                <td className="p-2 border">{new Date(u.date_joined).toLocaleString()}</td>
-                <td className="p-2 border">{u.is_active ? "Yes" : "No"}</td>
-                <td className="p-2 border">{u.is_staff ? "Yes" : "No"}</td>
+                <td>{u.id}</td>
+                <td>{u.username}</td>
+                <td>{u.email || "-"}</td>
+                <td>{new Date(u.date_joined).toLocaleString()}</td>
+                <td>{u.is_active ? "Yes" : "No"}</td>
+                <td>{u.is_staff ? "Yes" : "No"}</td>
               </tr>
             ))}
             {users.length === 0 && (
-              <tr><td className="p-2 border text-center" colSpan={6}>No users found</td></tr>
+              <tr>
+                <td colSpan={6}>No users found</td>
+              </tr>
             )}
           </tbody>
         </table>
