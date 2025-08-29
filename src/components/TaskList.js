@@ -17,6 +17,7 @@ const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [nextPage, setNextPage] = useState(null);
@@ -174,7 +175,7 @@ const fetchTasks = useCallback(
       const id = setTimeout(() => setShowToast(false), 3000);
       return () => clearTimeout(id);
     }
-  }, [showToast]);
+  }, []);
 
   // CRUD & utilities
   const handleAdd = async (task) => {
@@ -303,6 +304,8 @@ const fetchTasks = useCallback(
           Logout
         </button>
       </div>
+
+
 
       {error && <div className="alert alert-danger">{error}</div>}
 

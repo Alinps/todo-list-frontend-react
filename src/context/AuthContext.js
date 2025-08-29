@@ -1,12 +1,13 @@
 import { createContext, useState, useEffect } from 'react';
 import api from '../api';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
-
+const navigate=useNavigate()
   // On mount, hydrate axios header if token exists
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.clear();
     delete api.defaults.headers.common['Authorization'];
+    navigate('/login')
   };
 
   return (

@@ -15,15 +15,26 @@ const EditTaskModal = ({ show, onClose, task, onSave }) => {
     }
   }, [task]);
 
+  // const handleSave = () => {
+  //   if (!title.trim() || !dueDate) {
+  //     alert('Both title and date are required!');
+  //     return;
+  //   }
+  //   if (!task) return;
+  //   onSave(task.id, { title, due_date: dueDate });
+  //   onClose();
+  // };
   const handleSave = () => {
-    if (!title.trim() || !dueDate) {
-      alert('Both title and date are required!');
-      return;
-    }
-    if (!task) return;
-    onSave(task.id, { title, due_date: dueDate });
-    onClose();
-  };
+  if (!title.trim() || !dueDate) {
+    alert('Both title and date are required!');
+    return;
+  }
+  if (!task) return;
+
+  // send a merged object instead of (id, data)
+  onSave({ ...task, title, due_date: dueDate });
+  onClose();
+};
 
   return (
     <Modal show={show} onHide={onClose} centered>
