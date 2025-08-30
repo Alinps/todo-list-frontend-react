@@ -10,6 +10,7 @@ import api, { logEvent } from "../api";
 import { jsPDF } from "jspdf";
 import EditTaskModal from "./EditTaskModal";
 import TaskForm from "./TaskForm";
+import { showDueTomorrowNotifications } from "./notifications";
 
 const TaskList = () => {
   const { user, logout } = useContext(AuthContext);
@@ -96,6 +97,9 @@ const TaskList = () => {
     }),
     [tasks, downloadFile]
   );
+  
+
+  
 
   // Fetch with optional cursor URL
   // const fetchTasks = useCallback(
@@ -130,6 +134,16 @@ const TaskList = () => {
   //   [searchTerm, statusFilter]
   // );
   // Fetch with optional cursor URL (handles both relative + absolute URLs)
+
+  //desktop notification
+  useEffect(() => {
+    showDueTomorrowNotifications();
+    if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+  }, []);
+
+
 const fetchTasks = useCallback(
   async (url = "tasks/", status = statusFilter, search = searchTerm) => {
     setLoading(true);
@@ -216,6 +230,7 @@ const fetchTasks = useCallback(
     try {
       await api.delete(`tasks/${id}/`);
       await logEvent("delete_task", { taskId: id });
+      // await logEvent("delete", { taskId: id, extra: "Deleted from UI" });
       setShowToast(true);
     } catch (err) {
       console.error(err);
@@ -236,15 +251,21 @@ const fetchTasks = useCallback(
 
   const handleSave = async (updated) => {
     const before = tasks;
+    const payload = {
+    title: updated.title,
+    due_date: updated.due_date,
+    is_completed: updated.is_completed,
+};
     setTasks((prev) =>
       prev.map((t) => (t.id === updated.id ? updated : t))
     );
 
     try {
       const { data } = await api.patch(
-        `tasks/${updated.id}/`,
-        updated
+        `tasks/${updated.id}/`,payload
+       
       );
+       console.log(payload)
       setTasks((prev) =>
         prev.map((t) => (t.id === data.id ? data : t))
       );
@@ -252,6 +273,7 @@ const fetchTasks = useCallback(
       closeEdit();
     } catch (err) {
       console.error(err);
+      console.log(updated)
       setTasks(before);
       setError("Could not save changes.");
     }
@@ -293,6 +315,8 @@ const fetchTasks = useCallback(
       ),
     [tasks]
   );
+
+  //Trigger notification on app load
 
   return (
     <div className="container mt-5">
