@@ -10,7 +10,9 @@ import api, { logEvent } from "../api";
 import { jsPDF } from "jspdf";
 import EditTaskModal from "./EditTaskModal";
 import TaskForm from "./TaskForm";
-import { showDueTomorrowNotifications } from "./notifications";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Notifications from "./Notifications";
 
 const TaskList = () => {
   const { user, logout } = useContext(AuthContext);
@@ -137,7 +139,7 @@ const TaskList = () => {
 
   //desktop notification
   useEffect(() => {
-    showDueTomorrowNotifications();
+
     if (Notification.permission !== "granted") {
     Notification.requestPermission();
   }
@@ -493,6 +495,15 @@ const fetchTasks = useCallback(
         onClose={closeEdit}
         onSave={handleSave}
       />
+       <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+      />
+      <Notifications />
     </div>
   );
 };
