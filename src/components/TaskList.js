@@ -12,7 +12,7 @@ import EditTaskModal from "./EditTaskModal";
 import TaskForm from "./TaskForm";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Notifications from "./Notifications";
+import Notifications from "./Notification";
 
 const TaskList = () => {
   const { user, logout } = useContext(AuthContext);
