@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import axios from "axios";
 
 const TaskForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
@@ -6,15 +7,45 @@ const TaskForm = ({ onAdd }) => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!title.trim() || !dueDate) {
       alert("Both title and due date are required");
       return;
     }
-    onAdd({ title, due_date: dueDate, is_completed: false });
-    setTitle("");
-    setDueDate("");
+
+    try {
+      const token = localStorage.getItem("token");
+
+      // Directly call backend API
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/tasks/",
+        {
+          title,
+          due_date: dueDate,
+          is_completed: false,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+
+      // If success, notify parent
+      onAdd(response.data);
+
+      setTitle("");
+      setDueDate("");
+    } catch (error) {
+      if (error.response?.status === 403) {
+        // ❌ Free plan limit reached
+        alert("🚀 You have reached the free limit of 5 tasks. Upgrade to Premium to add more.");
+      } else {
+        alert("Something went wrong while adding the task.");
+      }
+    }
   };
 
   return (

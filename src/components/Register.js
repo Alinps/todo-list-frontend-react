@@ -1,6 +1,7 @@
 // src/components/Register.js
 import React, { useState } from "react";
 import api from "../api";
+import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
@@ -18,16 +19,17 @@ const Register = () => {
     setSuccess("");
 
     try {
-      const response = await api.post("register/", { username, email, password, phone_number });
+      const response = await axios.post("http://localhost:8000/api/register/", { username, email, password, phone_number });
       console.log(phone_number);
       console.log(response);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setSuccess("Registration successful! Redirecting to login...");
         setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
-      setError(err?.response?.data?.error || "Registration failed. Try a different username.");
+      console.error("Error response:", err.response);
+      setError(err?.response?.data?.error || "Registration failed.");
     }
   };
 
