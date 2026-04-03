@@ -1,70 +1,106 @@
-# Getting Started with Create React App
+# To-Do Frontend (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern task management frontend built with React.
 
-## Available Scripts
+This app includes:
+- User authentication (login/register)
+- Task creation (date + time)
+- Dedicated task listing page with search, filter, edit, and pagination
+- Profile management (view profile, edit profile, change password)
+- Premium upgrade flow
+- Admin login and dashboard pages
+- Import/Export actions (CSV, JSON, TXT, PDF, SQL)
 
-In the project directory, you can run:
+## Tech Stack
 
-### `npm start`
+- React (Create React App)
+- React Router
+- Axios (with interceptor-based auth)
+- Bootstrap + custom theme CSS
+- React Toastify
+- jsPDF
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Project Structure
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- `src/components/` UI pages/components
+- `src/context/` auth context
+- `src/utils/` route guards (`PrivateRoute`, `AdminRoute`)
+- `src/api.js` shared axios instance + auth interceptor
+- `public/theme.css` global styling/theme
 
-### `npm test`
+## Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js 18+
+- npm 9+
+- Running backend API
 
-### `npm run build`
+## Setup
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Install dependencies
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Start development server
 
-### `npm run eject`
+```bash
+npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+App runs at: `http://localhost:3000`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Build
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm run build
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Test
 
-## Learn More
+```bash
+npm test
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## API Base URL
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This frontend currently uses:
 
-### Code Splitting
+- `http://127.0.0.1:8000/api/`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Set in `src/api.js` (`baseURL`).
 
-### Analyzing the Bundle Size
+If your backend runs elsewhere, update that value.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Authentication
 
-### Making a Progressive Web App
+Auth token is stored in `localStorage` and attached automatically by Axios interceptor:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Header format: `Authorization: Token <token>`
 
-### Advanced Configuration
+## Main Routes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- `/` Landing page
+- `/login` User login
+- `/register` User registration
+- `/tasks` Task form page (create tasks)
+- `/tasks/list` Task listing page (search/filter/edit/pagination)
+- `/about` About page
+- `/profile` Profile page (view/edit/change password/upgrade)
+- `/admin/login` Admin login
+- `/admin/dashboard` Admin dashboard
 
-### Deployment
+## Profile Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Profile page is integrated with:
 
-### `npm run build` fails to minify
+- `GET /api/profile/me/`
+- `PATCH /api/profile/update/`
+- `POST /api/profile/change-password/`
+- `POST /api/profile/upgrade_premium/`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Notes
+
+- Ensure backend CORS is configured for `http://localhost:3000`.
+- Some features require authenticated users.
+- After password change, backend may return a new token; frontend handles token refresh.
