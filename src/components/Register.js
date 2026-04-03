@@ -1,13 +1,13 @@
 // src/components/Register.js
 import React, { useState } from "react";
 import api from "../api";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail]     = useState("");
   const [password, setPassword] = useState("");
+  const [confirm_password, setConfirm_password] = useState("");
   const [phone_number, setPhone_number] = useState("");
   const [error, setError]     = useState("");
   const [success, setSuccess] = useState("");
@@ -19,12 +19,12 @@ const Register = () => {
     setSuccess("");
 
     try {
-      const response = await axios.post("http://localhost:8000/api/register/", { username, email, password, phone_number });
+      const response = await api.post("register/", { username, email, password,confirm_password, phone_number });
       console.log(phone_number);
       console.log(response);
 
       if (response.status === 201) {
-        setSuccess("Registration successful! Redirecting to login...");
+        setSuccess(response.data.message);
         setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
@@ -67,6 +67,16 @@ const Register = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="text"
+                placeholder="Confirm Password"
+                value={confirm_password}
+                onChange={(e) => setConfirm_password(e.target.value)}
                 className="form-control"
                 required
               />

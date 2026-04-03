@@ -8,7 +8,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
 
-  // ✅ Only attach token if it exists AND endpoint needs authentication
+  // Only attach token if it exists AND endpoint needs authentication
   const publicEndpoints = ['register/', 'login/'];
   const isPublic = publicEndpoints.some(endpoint => config.url.includes(endpoint));
 

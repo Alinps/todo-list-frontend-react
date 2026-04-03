@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 const TaskForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
@@ -16,22 +16,11 @@ const TaskForm = ({ onAdd }) => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-
-      // Directly call backend API
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/tasks/",
-        {
-          title,
-          due_date: dueDate,
-          is_completed: false,
-        },
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
+      const response = await api.post("tasks/", {
+        title,
+        due_date: dueDate,
+        is_completed: false,
+      });
 
       // If success, notify parent
       onAdd(response.data);
