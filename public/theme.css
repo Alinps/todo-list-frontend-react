@@ -600,6 +600,21 @@ textarea:focus {
   margin-bottom: 0.9rem;
 }
 
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-info-item {
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: rgba(14, 22, 36, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .profile-label {
   color: var(--text-muted);
   font-size: 0.84rem;
@@ -617,6 +632,7 @@ textarea:focus {
   background: rgba(14, 22, 36, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.12);
   max-width: 680px;
+  margin-bottom: 1rem;
 }
 
 .profile-premium h3 {
@@ -630,6 +646,63 @@ textarea:focus {
 .profile-upgrade-msg {
   margin: 0.8rem 0 0;
   color: #d3e9ff !important;
+}
+
+.profile-toggle-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.profile-panel {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(14, 22, 36, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 1rem;
+}
+
+.profile-card {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(14, 22, 36, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 1rem;
+}
+
+.profile-card h3 {
+  margin: 0;
+}
+
+.profile-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.profile-actions {
+  grid-column: 1 / -1;
+}
+
+.profile-form-msg {
+  margin-top: 0.65rem;
+  color: var(--text-soft) !important;
 }
 
 .container.mt-5 > .d-flex.justify-content-between.align-items-center.mb-3 {
@@ -1349,6 +1422,18 @@ textarea:focus {
 
   .about-grid {
     grid-template-columns: 1fr;
+  }
+
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-toggle-row {
+    flex-direction: column;
   }
 
   .container.mt-5 .list-group-item {

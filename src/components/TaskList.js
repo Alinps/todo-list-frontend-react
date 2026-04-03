@@ -158,7 +158,7 @@ const TaskList = () => {
       <div className="container mt-5 task-form-page" ref={formRef}>
         <section className="task-form-page-head">
           <h2>Create Task</h2>
-          <p>Add a task with title and due date. Use Task List from navbar to browse and filter all tasks.</p>
+          <p>Add a task with title and due date.</p>
         </section>
         <TaskForm onAdd={handleAdd} />
       </div>
