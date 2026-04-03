@@ -4,6 +4,7 @@ import api from "../api";
 const TaskForm = ({ onAdd }) => {
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [dueTime, setDueTime] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -16,17 +17,35 @@ const TaskForm = ({ onAdd }) => {
     }
 
     try {
-      const response = await api.post("tasks/", {
+      let response;
+      const payload = {
         title,
         due_date: dueDate,
         is_completed: false,
-      });
+        ...(dueTime && { due_time: dueTime }),
+      };
+
+      try {
+        response = await api.post("tasks/", payload);
+      } catch (error) {
+        // Backward-compatible fallback for APIs that don't support due_time yet.
+        if (dueTime && error.response?.status === 400) {
+          response = await api.post("tasks/", {
+            title,
+            due_date: dueDate,
+            is_completed: false,
+          });
+        } else {
+          throw error;
+        }
+      }
 
       // If success, notify parent
       onAdd(response.data);
 
       setTitle("");
       setDueDate("");
+      setDueTime("");
     } catch (error) {
       if (error.response?.status === 403) {
         // ❌ Free plan limit reached
@@ -38,10 +57,17 @@ const TaskForm = ({ onAdd }) => {
   };
 
   return (
-    <div className="container">
-      <form onSubmit={handleSubmit} className="row g-2 mb-4">
-        <div className="col-12 col-md-5">
+    <section className="task-form-shell mb-4">
+      <div className="task-form-head">
+        <h3>Add New Task</h3>
+        <p>Create a task with a due date to keep your workflow on track.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="task-form-grid">
+        <div className="task-form-field task-form-title">
+          <label htmlFor="task-title">Title</label>
           <input
+            id="task-title"
             type="text"
             placeholder="Task title"
             className="form-control"
@@ -50,8 +76,10 @@ const TaskForm = ({ onAdd }) => {
           />
         </div>
 
-        <div className="col-12 col-md-4">
+        <div className="task-form-field task-form-date">
+          <label htmlFor="task-due-date">Due Date</label>
           <input
+            id="task-due-date"
             type="date"
             className="form-control"
             value={dueDate}
@@ -60,13 +88,24 @@ const TaskForm = ({ onAdd }) => {
           />
         </div>
 
-        <div className="col-12 col-md-3">
+        <div className="task-form-field task-form-time">
+          <label htmlFor="task-due-time">Time</label>
+          <input
+            id="task-due-time"
+            type="time"
+            className="form-control"
+            value={dueTime}
+            onChange={(e) => setDueTime(e.target.value)}
+          />
+        </div>
+
+        <div className="task-form-action">
           <button type="submit" className="btn btn-primary w-100">
             Add Task
           </button>
         </div>
       </form>
-    </div>
+    </section>
   );
 };
 

@@ -1,32 +1,22 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api";
-import TaskForm from "./TaskForm";
 import TaskNavbar from "./TaskNavbar";
 
-const TaskList = () => {
+const ProfilePage = () => {
   const { user, logout } = useContext(AuthContext);
-  const formRef = useRef(null);
+  const navigate = useNavigate();
   const importInputRef = useRef(null);
-  const [tasks, setTasks] = useState([]);
 
-  const fetchTasksForExport = useCallback(async () => {
-    try {
-      const { data } = await api.get("tasks/", { params: { status: "all" } });
-      setTasks(Array.isArray(data) ? data : data?.results || []);
-    } catch (err) {
-      console.error("Failed to load tasks for export:", err);
-    }
-  }, []);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [upgradeMsg, setUpgradeMsg] = useState("");
+  const [tasks] = useState([]);
 
-  useEffect(() => {
-    fetchTasksForExport();
-  }, [fetchTasksForExport]);
-
-  const downloadFile = useCallback((content, filename, mimeType) => {
+  const downloadFile = (content, filename, mimeType) => {
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -34,7 +24,7 @@ const TaskList = () => {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-  }, []);
+  };
 
   const exportHandlers = useMemo(
     () => ({
@@ -92,59 +82,37 @@ const TaskList = () => {
         downloadFile(stmts, "tasks.sql", "text/sql");
       },
     }),
-    [tasks, downloadFile]
+    [tasks]
   );
 
-  const importCSV = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const text = await file.text();
-    const lines = text.split("\n").filter((l) => l.trim());
-    const start = lines[0].toLowerCase().includes("title") ? 1 : 0;
-
-    for (let i = start; i < lines.length; i++) {
-      const [title, due_date, is_completed] = lines[i]
-        .replace(/"/g, "")
-        .split(",")
-        .map((s) => s.trim());
-      if (!title || !due_date) continue;
-      try {
-        await api.post("tasks/", {
-          title,
-          due_date,
-          is_completed: is_completed === "true",
-        });
-      } catch {
-        // skip row errors
+  const handleUpgrade = async () => {
+    setUpgradeLoading(true);
+    setUpgradeMsg("");
+    try {
+      const { data } = await api.post("profile/upgrade_premium/", {});
+      const msg = data?.message || "You are now a premium user!";
+      setUpgradeMsg(msg);
+      toast.success(msg);
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setUpgradeMsg("Session expired. Please login again.");
+      } else {
+        setUpgradeMsg(error.response?.data?.message || "Upgrade failed. Please try again.");
       }
+      toast.error("Could not upgrade to premium.");
+    } finally {
+      setUpgradeLoading(false);
     }
-
-    await fetchTasksForExport();
-    toast.success("Imported CSV!");
-  };
-
-  const openImportPicker = () => {
-    importInputRef.current?.click();
-  };
-
-  const handleTaskFormJump = () => {
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const handleAdd = (newTask) => {
-    setTasks((prev) => [newTask, ...prev]);
-    toast.success("Task added!");
   };
 
   return (
     <>
       <TaskNavbar
         username={user?.username}
-        onTaskFormClick={handleTaskFormJump}
+        onTaskFormClick={() => navigate("/tasks")}
         onLogout={logout}
         exportHandlers={exportHandlers}
-        onImportClick={openImportPicker}
+        onImportClick={() => importInputRef.current?.click()}
       />
 
       <input
@@ -152,15 +120,38 @@ const TaskList = () => {
         ref={importInputRef}
         accept=".csv"
         className="d-none"
-        onChange={importCSV}
+        onChange={() => {}}
       />
 
-      <div className="container mt-5 task-form-page" ref={formRef}>
-        <section className="task-form-page-head">
-          <h2>Create Task</h2>
-          <p>Add a task with title and due date. Use Task List from navbar to browse and filter all tasks.</p>
+      <div className="container mt-5 profile-page">
+        <section className="profile-head">
+          <h2>Profile</h2>
+          <p>Manage your account and unlock premium features.</p>
         </section>
-        <TaskForm onAdd={handleAdd} />
+
+        <section className="profile-info">
+          <div>
+            <span className="profile-label">Username</span>
+            <h4>{user?.username || "User"}</h4>
+          </div>
+        </section>
+
+        <section className="profile-premium">
+          <h3>Premium Plan</h3>
+          <p>
+            Upgrade to premium to remove free-plan task limits and unlock a smoother
+            productivity workflow.
+          </p>
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={handleUpgrade}
+            disabled={upgradeLoading}
+          >
+            {upgradeLoading ? "Upgrading..." : "Upgrade to Premium"}
+          </button>
+          {upgradeMsg && <p className="profile-upgrade-msg">{upgradeMsg}</p>}
+        </section>
       </div>
 
       <ToastContainer
@@ -175,4 +166,4 @@ const TaskList = () => {
   );
 };
 
-export default TaskList;
+export default ProfilePage;

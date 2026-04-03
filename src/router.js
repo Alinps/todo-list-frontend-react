@@ -1,10 +1,13 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import TaskList from "./components/TaskList";
+import TasksPage from "./components/TasksPage";
+import TaskListingPage from "./components/TaskListingPage";
+import AboutUs from "./components/AboutUs";
+import ProfilePage from "./components/ProfilePage";
 
 
 import AdminLogin from "./components/AdminLogin";
@@ -28,7 +31,31 @@ function Router() {
         path="/tasks"
         element={
           <PrivateRoute>
-            <TaskList />
+            <TasksPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <PrivateRoute>
+            <AboutUs />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/tasks/list"
+        element={
+          <PrivateRoute>
+            <TaskListingPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <ProfilePage />
           </PrivateRoute>
         }
       />
